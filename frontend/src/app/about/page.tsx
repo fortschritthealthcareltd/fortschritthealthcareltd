@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback, useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { FadeUp, FadeIn, StaggerGrid, staggerItem, motion } from "@/utils/animations";
@@ -30,116 +30,361 @@ const cultureGallery = [
   },
 ];
 
-const pastEvents = [
+interface EventPhoto {
+  src: string;
+  title: string;
+  caption: string;
+}
+
+interface EventItem {
+  id: string;
+  title: string;
+  badge: string;
+  category: "Exhibition" | "Award" | "Corporate";
+  date: string;
+  city: string;
+  venue: string;
+  stall?: string;
+  icon: string;
+  coverImage: string;
+  photos: EventPhoto[];
+  overview: string;
+  keyHighlights: string[];
+  productsShowcased: string[];
+  delegation: string[];
+}
+
+const pastEvents: EventItem[] = [
   {
-    title: "Industry Recognition & Excellence Award",
-    date: "2024",
-    category: "Industry Award",
+    id: "award-himachal-2024",
+    title: "Himachal Pradesh Pharmaceutical Excellence & Leadership Award",
+    badge: "State Felicitation",
+    category: "Award",
+    date: "October 2024",
+    city: "Shimla, HP",
+    venue: "State Industry Felicitation Conclave, Shimla",
+    stall: "Dignitary Honors Stage",
     icon: "emoji_events",
-    image: "/event/award1.jpeg",
-    description: "Fortschritt Healthcare was honoured at the Jagran industry felicitation ceremony, receiving recognition from senior government dignitaries for outstanding contribution to the pharmaceutical manufacturing sector in Himachal Pradesh."
+    coverImage: "/event/himachal_pharma_excellence_award.jpg",
+    photos: [
+      {
+        src: "/event/himachal_pharma_excellence_award.jpg",
+        title: "Felicitation Ceremony with Senior Dignitaries",
+        caption: "Managing Director Naveen Kandpal and senior executive team receiving the state excellence award for pharmaceutical manufacturing standards."
+      }
+    ],
+    overview: "Fortschritt Healthcare Limited was formally conferred the prestigious Pharmaceutical Manufacturing Excellence Award at the state-level industry felicitation ceremony in Himachal Pradesh. The honor recognizes our relentless adherence to WHO-GMP benchmarks, robust quality management systems across solid orals, and our pivotal contribution to reliable healthcare supply chains and contract manufacturing across India.",
+    keyHighlights: [
+      "Felicitated in the presence of distinguished state leadership and pharmaceutical regulatory heads.",
+      "Recognized for zero-compromise quality assurance and WHO-GMP compliant facility operations in Baddi.",
+      "Acknowledged for advancing indigenous third-party and contract manufacturing capabilities across 1000+ formulations.",
+      "Commended for continuous investments in advanced testing instrumentation, HPLC systems, and cleanroom technologies."
+    ],
+    productsShowcased: [
+      "WHO-GMP Solid Orals (Tablets & Capsules)",
+      "Critical Hormonal Therapy Formulations",
+      "High-Bioavailability Extended Release Tablets",
+      "Nutraceutical Sachet & Protein Powder Lines"
+    ],
+    delegation: [
+      "Mr. Naveen Kandpal (Managing Director)",
+      "Senior Plant Operations & Regulatory Affairs Heads",
+      "Quality Assurance & Analytical Chemistry Leads"
+    ]
   },
   {
-    title: "Annual Staff Celebration & Team Felicitation",
-    date: "2024",
-    category: "Team Event",
+    id: "team-baddi-2024",
+    title: "Annual Plant Team Felicitation & Safety Milestone Celebration",
+    badge: "Workforce Milestone",
+    category: "Corporate",
+    date: "December 2024",
+    city: "Baddi, HP",
+    venue: "Fortschritt Manufacturing Facility & Campus, DIC Industrial Area, Baddi",
+    stall: "Baddi Plant Central Assembly",
     icon: "celebration",
-    image: "/event/group1.jpeg",
-    description: "Our entire Baddi plant team came together for our annual celebration, honouring hardworking operators, packaging staff, and administrative personnel for their year-round dedication and excellence in GMP-compliant manufacturing."
+    coverImage: "/event/baddi_plant_team_annual_celebration.jpg",
+    photos: [
+      {
+        src: "/event/baddi_plant_team_annual_celebration.jpg",
+        title: "All-Staff Safety & Quality Assembly",
+        caption: "Operations, engineering, QC/QA, and packaging staff gathered at our Baddi manufacturing facility celebrating safe production milestones."
+      }
+    ],
+    overview: "Fortschritt Healthcare celebrated its annual workforce milestone assembly at our Baddi manufacturing facility, honoring over 100 technical operators, formulation scientists, packaging specialists, and QA personnel. The gathering celebrated over 1,200 consecutive safe production days without lost-time incidents and recognized individual staff members for outstanding dedication to cGMP hygiene, precision dosing, and zero-defect packaging.",
+    keyHighlights: [
+      "Over 100+ team members felicitated across Quality, Production, Engineering, and Logistics divisions.",
+      "Celebrated 1,200+ consecutive days of zero lost-time incidents under stringent EHS protocols.",
+      "Outstanding Operator and Best Maintenance Team awards presented by the executive leadership.",
+      "Annual review of plant automation upgrades and operator skill enhancement programs."
+    ],
+    productsShowcased: [
+      "Quality Culture in High-Speed Blister Sealing",
+      "Precision Dosing in Automatic Capsule Filling",
+      "Standard Operating Procedures (SOP) Compliance",
+      "Cross-Contamination Prevention & Cleanroom Protocols"
+    ],
+    delegation: [
+      "Leadership Team, Plant Heads & Quality Control Managers",
+      "Entire Baddi Manufacturing & Operations Family"
+    ]
   },
   {
-    title: "CPhI & P-MEC India Participation",
+    id: "expo-bangalore-2025",
+    title: "Bangalore International Pharma Expo & B2B Conclave",
+    badge: "South India Expo",
+    category: "Exhibition",
     date: "November 2025",
-    category: "Global Expo",
-    icon: "public",
-    image: "/event-cphi.png",
-    description: "Represented Fortschritt Healthcare at South Asia's premier pharma event, presenting our advanced hormonal tablet formulations to international buyers from 20+ countries."
+    city: "Bengaluru, Karnataka",
+    venue: "Bangalore International Exhibition Centre (BIEC), Bengaluru",
+    stall: "Pavilion 2 — Booth B-14 & B-15",
+    icon: "store",
+    coverImage: "/event/BangaloreExhibitionPhotos/bangalore_booth_overview.webp",
+    photos: [
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_booth_overview.webp",
+        title: "Fortschritt Pavilion Overview",
+        caption: "Custom-designed exhibition pavilion showcasing our diversified 1000+ formulation capabilities."
+      },
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_team_at_stall.webp",
+        title: "Director & Technical Delegation at Booth",
+        caption: "Director Chander Mohan Negi and commercial leads engaging with South Indian pharmaceutical distributors."
+      },
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_product_display.webp",
+        title: "Formulations & Sample Showcase",
+        caption: "Display of finished dosage forms: tablets, softgel capsules, hormonal therapies, and sachets."
+      },
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_visitor_interaction.webp",
+        title: "B2B Buyer & Formulary Discussions",
+        caption: "Strategic discussions with hospital pharmacy procurement directors and pharma brand owners."
+      },
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_exhibition_hall.webp",
+        title: "Central Exhibition Concourse",
+        caption: "Pan-India presence at one of Asia's most prominent pharmaceutical trade gatherings."
+      },
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_stall_setup_1.webp",
+        title: "Branded Showcase & Packaging Display",
+        caption: "Detailing strip packaging standards, alu-alu blisters, and export-grade finished goods."
+      },
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_stall_setup_2.webp",
+        title: "Contract Manufacturing Consultation Zone",
+        caption: "Dedicated area for prospective pharma franchise partners and contract manufacturing inquiries."
+      },
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_team_group.webp",
+        title: "South India Regional Delegation",
+        caption: "Commercial representatives and field technical support leads at the Bangalore summit."
+      },
+      {
+        src: "/event/BangaloreExhibitionPhotos/bangalore_brochure_display.webp",
+        title: "Product Compendium & Literature Desk",
+        caption: "Comprehensive product catalogues and dossier summaries distributed to 400+ verified trade delegates."
+      }
+    ],
+    overview: "At the Bangalore International Pharma Expo held at the BIEC complex, Fortschritt Healthcare presented its comprehensive contract manufacturing and formulation capabilities to healthcare distributors, hospital purchase executives, and brand marketers from Karnataka, Tamil Nadu, Andhra Pradesh, and Telangana. The summit served as a springboard for expanding the company's third-party manufacturing footprint in South India, generating strong buyer engagement for our high-capacity hormonal lines and specialized 4G/9G softgel capsules.",
+    keyHighlights: [
+      "450+ verified business inquiries recorded across 3 intensive trade exhibition days.",
+      "18 preliminary contract manufacturing memoranda initiated with regional pharmaceutical marketers.",
+      "South India launch of specialized Progesterone Sustained Release & Thyroxine product dossiers.",
+      "Direct technical consultations conducted on batch scale-up, stability studies, and packaging customizations."
+    ],
+    productsShowcased: [
+      "Hormonal Care (Progesterone SR 100/200/300/400mg, Thyroxine Sodium)",
+      "4G & 9G Botanical Extract + Omega-3 Softgels",
+      "General Pharma Tablets (Antibiotics, Antifungals, Pain Management)",
+      "Nutraceutical Sachets & High-Protein Formulations"
+    ],
+    delegation: [
+      "Mr. Chander Mohan Negi (Director, Commercial & Strategic Marketing)",
+      "Regional Institutional Sales Managers (South India)",
+      "Senior Technical Formulation Liaison Officers"
+    ]
   },
   {
-    title: "Annual Plant Safety & Festive Awards",
-    date: "December 2025",
-    category: "Workforce",
-    icon: "workspace_premium",
-    image: "/event-festive.png",
-    description: "Celebrated 1200+ consecutive safe production days at our Baddi facility, presenting performance awards to our machine operators and supervisor teams during Diwali celebrations."
+    id: "expo-kochi-2025",
+    title: "Kochi Healthcare & Pharmaceutical Trade Expo",
+    badge: "Kerala Trade Expo",
+    category: "Exhibition",
+    date: "September 2025",
+    city: "Kochi, Kerala",
+    venue: "Cochin International Expo Centre, Nedumbassery, Kochi",
+    stall: "Hall A — Stall No. C-08",
+    icon: "store",
+    coverImage: "/event/KochiExhibitionPhotos/kochi_exhibition_stall.webp",
+    photos: [
+      {
+        src: "/event/KochiExhibitionPhotos/kochi_exhibition_stall.webp",
+        title: "Fortschritt Exhibition Stall — Kochi",
+        caption: "Branded pavilion welcoming trade visitors, pharmacy proprietors, and hospital buyers across Kerala."
+      },
+      {
+        src: "/event/KochiExhibitionPhotos/kochi_team_display.webp",
+        title: "Leadership & Commercial Team",
+        caption: "Executive delegation showcasing third-party manufacturing solutions tailored for coastal distribution."
+      },
+      {
+        src: "/event/KochiExhibitionPhotos/kochi_product_showcase.webp",
+        title: "Pharmaceutical Formulations Showcase",
+        caption: "Display of moisture-resistant alu-alu packaging ideal for tropical climatic conditions."
+      },
+      {
+        src: "/event/KochiExhibitionPhotos/kochi_visitor_engagement.webp",
+        title: "Distributor & Stockist Partnerships",
+        caption: "In-depth one-on-one sessions discussing distribution logistics, margin structures, and delivery timelines."
+      },
+      {
+        src: "/event/KochiExhibitionPhotos/kochi_team_photo.webp",
+        title: "Kerala Market Launch Team",
+        caption: "Commemorating successful network expansion and client onboarding across the state."
+      }
+    ],
+    overview: "Fortschritt Healthcare established a notable presence at the Kochi Healthcare & Pharma Expo, focusing on the retail pharmacy chain networks and hospital procurement groups across Kerala. Our showcase centered on moisture-resistant Alu-Alu strip packaging optimized for tropical humidity, certified stability-tested solid orals, and flexible contract manufacturing batch sizes that empower regional marketers to launch high-quality formulations swiftly.",
+    keyHighlights: [
+      "Connected with 280+ retail pharmacy chain operators and ethical pharma distributors.",
+      "Formulated specialized packaging solutions tailored for tropical and coastal climate storage.",
+      "Onboarded 12 new PCD franchise partners across Kochi, Thiruvananthapuram, and Kozhikode.",
+      "Received strong response for pediatric, gynecological, and wellness nutraceutical portfolios."
+    ],
+    productsShowcased: [
+      "Gynecological Therapeutics & Progesterone Range",
+      "Calcitriol, Calcium Citrate Malate & Vitamin D3 Softgels",
+      "Prebiotic & Probiotic Digestive Formulations",
+      "Gastrointestinal & Anti-Ulcerant Tablets"
+    ],
+    delegation: [
+      "Commercial Operations Directorate",
+      "Regional Supply Chain & Business Development Executives"
+    ]
+  },
+  {
+    id: "expo-kolkata-2025",
+    title: "Kolkata National Pharmaceutical & Trade Expo",
+    badge: "East India Expo",
+    category: "Exhibition",
+    date: "August 2025",
+    city: "Kolkata, West Bengal",
+    venue: "Biswa Bangla Mela Prangan (Milan Mela Complex), Kolkata",
+    stall: "Central Concourse — Stall B-14 / Directory C-9",
+    icon: "store",
+    coverImage: "/event/KolkataExhibitionPhotos/kolkata_exhibition_stall.jpg",
+    photos: [
+      {
+        src: "/event/KolkataExhibitionPhotos/kolkata_exhibition_stall.jpg",
+        title: "Fortschritt Eastern India Exhibition Booth",
+        caption: "The corporate pavilion highlighting our 1000+ formulations and state-of-the-art Baddi plant."
+      },
+      {
+        src: "/event/KolkataExhibitionPhotos/kolkata_team_at_booth.jpg",
+        title: "Director Chander Mohan Negi at Kolkata Expo",
+        caption: "Director Chander Mohan Negi representing Fortschritt Healthcare at the official exhibition directory."
+      },
+      {
+        src: "/event/KolkataExhibitionPhotos/kolkata_product_display.jpg",
+        title: "Formulation Portfolio Display",
+        caption: "Detailed presentation of General Pharma, Hormones, and Nutraceutical samples."
+      },
+      {
+        src: "/event/KolkataExhibitionPhotos/kolkata_visitor_interaction.jpg",
+        title: "Regional Distributor Negotiations",
+        caption: "Engaging discussions with senior pharma distributors from West Bengal, Bihar, and Assam."
+      },
+      {
+        src: "/event/KolkataExhibitionPhotos/kolkata_pharma_expo_hall.jpg",
+        title: "Exhibition Concourse & Partner Network",
+        caption: "Fostering strategic cross-border and regional pharmaceutical distribution alliances."
+      }
+    ],
+    overview: "Marking an important strategic expansion into Eastern India and neighboring supply corridors, Fortschritt Healthcare actively participated in the Kolkata National Pharmaceutical Expo. The event brought together major stockists, institutional buyers, and pharmaceutical marketers from West Bengal, Odisha, Bihar, Jharkhand, and the Northeastern states. Our delegation presented our scalable production capabilities, rapid delivery timelines, and full analytical dossier support.",
+    keyHighlights: [
+      "Expanded distributor presence across 5 Eastern states (West Bengal, Odisha, Bihar, Jharkhand, Assam).",
+      "Concluded 15 strategic third-party manufacturing supplier agreements for high-volume solid orals.",
+      "Showcased high-capacity automated production lines: 1000+ active commercial formulation dossiers.",
+      "High interest generated for cardiovascular, anti-diabetic, and gynecological sustained-release formulations."
+    ],
+    productsShowcased: [
+      "Cardiovascular & Anti-Hypertensive Tablets (Telmisartan, Amlodipine combinations)",
+      "Anti-Diabetic Bilayered Tablets (Metformin SR + Glimepiride)",
+      "Hormonal Tablets (Natural Micronized Progesterone SR)",
+      "Specialty Multivitamin & Mineral Nutritional Supplements"
+    ],
+    delegation: [
+      "Mr. Chander Mohan Negi (Director, Commercial & Strategic Marketing)",
+      "Eastern Regional Institutional Sales Team"
+    ]
   }
 ];
 
 export default function AboutPage() {
-  // ── Drag-to-scroll for the events marquee ──────────────────────
-  // Uses Pointer Events (mouse + touch unified) + setPointerCapture so
-  // dragging stays smooth even when cursor leaves the container.
-  // On drag start we REMOVE the CSS animation entirely (not just pause)
-  // so inline transform has sole control with zero CSS-vs-inline conflict.
-  const marqueeWrapperRef = useRef<HTMLDivElement>(null);
-  const trackRef          = useRef<HTMLDivElement>(null);
-  const isDragging        = useRef(false);
-  const dragStartX        = useRef(0);
-  const dragBaseX         = useRef(0); // track translateX at drag start
-  const DURATION          = 35;        // must match CSS animation duration
+  // ── Event Gallery Modal & Filter State ──────────────────────────
+  const [activeEvent, setActiveEvent] = useState<EventItem | null>(null);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [activeTab, setActiveTab] = useState<"overview" | "highlights" | "products" | "delegation">("overview");
+  const [filterCategory, setFilterCategory] = useState<"All" | "Exhibition" | "Award" | "Corporate">("All");
+  const autoSlideRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  /** Read the current translateX (px) from computed style. */
-  const getTrackX = useCallback((): number => {
-    if (!trackRef.current) return 0;
-    const m = new DOMMatrix(window.getComputedStyle(trackRef.current).transform);
-    return m.m41;
+  const openEvent = useCallback((evt: EventItem) => {
+    setActiveEvent(evt);
+    setActivePhotoIndex(0);
+    setActiveTab("overview");
+    setIsPlaying(true);
   }, []);
 
-  /** Keep offset looping in [-2×oneSet, 0] for seamless infinity. */
-  const wrapX = useCallback((x: number): number => {
-    if (!trackRef.current) return x;
-    const oneSet = trackRef.current.scrollWidth / 3;
-    if (oneSet <= 0) return x;
-    while (x < -2 * oneSet) x += oneSet;
-    while (x > 0)           x -= oneSet;
-    return x;
+  const closeEvent = useCallback(() => {
+    setActiveEvent(null);
+    setActivePhotoIndex(0);
+    setIsPlaying(false);
   }, []);
 
-  const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!trackRef.current || !marqueeWrapperRef.current) return;
-    // Capture so pointer events keep firing even outside the element
-    e.currentTarget.setPointerCapture(e.pointerId);
+  const goToPhoto = useCallback((idx: number) => {
+    if (!activeEvent) return;
+    const total = activeEvent.photos.length;
+    setActivePhotoIndex((idx + total) % total);
+  }, [activeEvent]);
 
-    // Read position BEFORE killing the animation
-    const currentX = getTrackX();
-    dragBaseX.current   = currentX;
-    dragStartX.current  = e.clientX;
-    isDragging.current  = true;
+  // Auto-advance photos every 4s while modal is open & playing
+  useEffect(() => {
+    if (!activeEvent || activeEvent.photos.length <= 1 || !isPlaying) return;
+    autoSlideRef.current = setInterval(() => {
+      setActivePhotoIndex((prev) => (prev + 1) % activeEvent.photos.length);
+    }, 4000);
+    return () => {
+      if (autoSlideRef.current) clearInterval(autoSlideRef.current);
+    };
+  }, [activeEvent, isPlaying]);
 
-    // Fully remove CSS animation → inline transform has sole ownership
-    trackRef.current.style.animation = 'none';
-    trackRef.current.style.transform = `translateX(${currentX}px)`;
-    marqueeWrapperRef.current.style.cursor = 'grabbing';
-  }, [getTrackX]);
+  // Lock body scroll when modal open
+  useEffect(() => {
+    if (activeEvent) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeEvent]);
 
-  const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging.current || !trackRef.current) return;
-    const delta = e.clientX - dragStartX.current;
-    const newX  = wrapX(dragBaseX.current + delta);
-    trackRef.current.style.transform = `translateX(${newX}px)`;
-  }, [wrapX]);
-
-  const onPointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging.current || !trackRef.current || !marqueeWrapperRef.current) return;
-    e.currentTarget.releasePointerCapture(e.pointerId);
-    isDragging.current = false;
-
-    // Compute how far through one cycle we are to resume from that point
-    const oneSet    = trackRef.current.scrollWidth / 3;
-    const currentX  = getTrackX();
-    const progress  = oneSet > 0 ? Math.abs(currentX % oneSet) / oneSet : 0;
-    const delay     = -(progress * DURATION);
-
-    // Clear inline styles, then restore animation starting at the right offset
-    trackRef.current.style.transform = '';
-    trackRef.current.style.animation =
-      `marquee-rtl ${DURATION}s linear ${delay}s infinite`;
-
-    marqueeWrapperRef.current.style.cursor = 'grab';
-  }, [getTrackX]);
-
-  // Cancel behaves same as up (e.g. touch cancelled by OS)
-  const onPointerCancel = onPointerUp;
+  // Keyboard navigation
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeEvent();
+      if (!activeEvent) return;
+      if (e.key === "ArrowRight") goToPhoto(activePhotoIndex + 1);
+      if (e.key === "ArrowLeft") goToPhoto(activePhotoIndex - 1);
+      if (e.key === " ") {
+        e.preventDefault();
+        setIsPlaying((p) => !p);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [activeEvent, activePhotoIndex, closeEvent, goToPhoto]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -154,8 +399,7 @@ export default function AboutPage() {
       }, 200);
     }
   }, []);
-
-  return (
+return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       <Navbar />
 
@@ -455,95 +699,422 @@ export default function AboutPage() {
         </div>
       </section>
 
+
+      
       {/* ── Past Events Section ────────────────────────────────── */}
-      <section id="events" className="py-24 bg-white scroll-mt-20 overflow-hidden border-t border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+      <section id="events" className="py-24 bg-slate-50 scroll-mt-20 overflow-hidden border-t border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
           <FadeUp className="text-center max-w-3xl mx-auto">
             <div className="text-secondary font-extrabold text-xs uppercase tracking-widest mb-3">
-              Events & Highlights
+              Events &amp; Industry Highlights
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-primary mb-4">
-              Company Highlights & Activities
+            <h2 className="text-3xl md:text-4xl font-extrabold text-primary mb-4 tracking-tight">
+              Company Highlights &amp; Trade Activities
             </h2>
-            <p className="text-slate-500 text-lg leading-relaxed font-medium">
-              Explore our participations, compliance milestones, and corporate social responsibility (CSR) drives.
+            <p className="text-slate-500 text-base sm:text-lg leading-relaxed font-medium mb-8">
+              Explore our pan-India trade exhibitions, state pharmaceutical leadership honors, and manufacturing team milestone assemblies.
             </p>
+
+            {/* Category Filter Pills */}
+            <div className="inline-flex items-center gap-1.5 p-1.5 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+              {[
+                { id: "All", label: "All Events (5)" },
+                { id: "Exhibition", label: "Trade Exhibitions (3)" },
+                { id: "Award", label: "Excellence Awards (1)" },
+                { id: "Corporate", label: "Workforce & Culture (1)" },
+              ].map((tab) => {
+                const isSelected = filterCategory === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setFilterCategory(tab.id as any)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-slate-600 hover:text-primary hover:bg-slate-50"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
           </FadeUp>
         </div>
 
-        {/* Full-width Marquee Container */}
-        <FadeUp delay={0.15}>
-          <div className="relative w-full py-4">
-            {/* Gradient overlays — siblings to scroll area, always fixed */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-40 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent z-10" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-40 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent z-10" />
+        {/* 5-Event Grid */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+          <StaggerGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+            {pastEvents
+              .filter((evt) => filterCategory === "All" || evt.category === filterCategory)
+              .map((evt) => (
+                <motion.button
+                  key={evt.id}
+                  variants={staggerItem}
+                  onClick={() => openEvent(evt)}
+                  className="group relative rounded-[32px] overflow-hidden border border-slate-200/70 bg-white hover:-translate-y-2 hover:shadow-2xl hover:border-primary/30 transition-all duration-300 shadow-sm text-left cursor-pointer w-full flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Cover Image Container */}
+                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-900">
+                      <img
+                        src={evt.coverImage}
+                        alt={evt.title}
+                        draggable={false}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
 
-            {/* Drag surface — overflow-hidden clips the track, touch-action:none */}
-            {/* prevents browser scroll hijacking on mobile                        */}
-            <div
-              ref={marqueeWrapperRef}
-              className="overflow-hidden cursor-grab select-none"
-              style={{ touchAction: 'none' }}
-              onPointerDown={onPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={onPointerUp}
-              onPointerCancel={onPointerCancel}
-            >
-              {/* will-change:transform hints the browser to GPU-composite this layer */}
-              <div
-                ref={trackRef}
-                className="flex w-max gap-8 animate-marquee-rtl px-8"
-                style={{ willChange: 'transform' }}
-              >
-                {[...pastEvents, ...pastEvents, ...pastEvents].map((evt, idx) => (
-                  <div
-                    key={`${evt.title}-${idx}`}
-                    className="group w-[300px] sm:w-[420px] flex-shrink-0 rounded-[32px] overflow-hidden border border-slate-100 bg-white hover:-translate-y-1 hover:shadow-xl hover:border-transparent transition-all duration-300 shadow-sm flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
-                        <img
-                          src={evt.image}
-                          alt={evt.title}
-                          draggable={false}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent opacity-60" />
+                      {/* Photo count badge */}
+                      <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 bg-black/60 text-white text-[11px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md border border-white/10 shadow-sm">
+                        <span className="material-icons text-xs text-sky-400">photo_library</span>
+                        <span>{evt.photos.length} {evt.photos.length === 1 ? "Photo" : "Photos"}</span>
                       </div>
 
-                      <div className="p-8">
-                        <div className="flex justify-between items-center mb-5">
-                          <span className="text-[10px] font-bold tracking-wider uppercase bg-primary/5 text-primary px-3 py-1 rounded-full">
-                            {evt.category}
-                          </span>
-                          <span className="text-xs font-semibold text-slate-400 tabular-nums">
-                            {evt.date}
-                          </span>
-                        </div>
+                      {/* Badge / Category */}
+                      <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5">
+                        <span className="bg-primary/90 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-md shadow-sm">
+                          {evt.badge}
+                        </span>
+                      </div>
 
-                        <div className="flex items-start gap-3.5 mb-4">
-                          <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                            <span className="material-icons text-lg">{evt.icon}</span>
-                          </div>
-                          <h4 className="text-base sm:text-lg font-bold text-primary group-hover:text-primary-accent transition-colors pt-1.5">
-                            {evt.title}
-                          </h4>
-                        </div>
+                      {/* City & Venue info floating at bottom of image */}
+                      <div className="absolute bottom-3.5 left-3.5 right-3.5 flex items-center justify-between text-white text-xs font-semibold">
+                        <span className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-lg">
+                          <span className="material-icons text-sm text-sky-400">location_on</span>
+                          {evt.city}
+                        </span>
+                        <span className="text-[11px] text-slate-300 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-lg">
+                          {evt.date}
+                        </span>
+                      </div>
+                    </div>
 
-                        <p className="text-slate-500 text-sm leading-relaxed pl-14 font-medium">
-                          {evt.description}
-                        </p>
+                    {/* Card Body */}
+                    <div className="p-6 sm:p-7">
+                      <div className="flex items-start gap-3.5 mb-3">
+                        <div className="w-10 h-10 rounded-2xl bg-primary/5 flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                          <span className="material-icons text-lg">{evt.icon}</span>
+                        </div>
+                        <h4 className="text-base sm:text-lg font-bold text-primary group-hover:text-secondary transition-colors pt-1 leading-snug">
+                          {evt.title}
+                        </h4>
+                      </div>
+
+                      <p className="text-slate-500 text-xs sm:text-sm leading-relaxed font-medium line-clamp-3 mb-4">
+                        {evt.overview}
+                      </p>
+
+                      {/* Venue highlight snippet */}
+                      <div className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-100 text-[11px] font-semibold text-slate-600 flex items-center gap-2">
+                        <span className="material-icons text-xs text-secondary flex-shrink-0">apartment</span>
+                        <span className="truncate">{evt.venue}</span>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </FadeUp>
+
+                  {/* Card Footer */}
+                  <div className="px-6 sm:px-7 pb-6 pt-0">
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-secondary group-hover:text-primary transition-colors">
+                      <span className="flex items-center gap-1.5">
+                        <span className="material-icons text-sm">visibility</span>
+                        View Gallery &amp; Full Dossier
+                      </span>
+                      <span className="material-icons text-sm group-hover:translate-x-1.5 transition-transform">arrow_forward</span>
+                    </div>
+                  </div>
+                </motion.button>
+              ))}
+          </StaggerGrid>
+        </div>
       </section>
 
-      <Footer />
+      {/* ── Event Photo Gallery & Full Dossier Modal ───────────────── */}
+      {activeEvent && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden"
+          onClick={closeEvent}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-md" />
+
+          {/* Master Modal Box */}
+          <div
+            className="relative z-10 w-full max-w-7xl h-[94vh] max-h-[920px] bg-slate-900 rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-2xl border border-white/10 flex flex-col lg:grid lg:grid-cols-12"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* ── LEFT COLUMN: ZERO-CROP THEATER (lg:col-span-7 xl:col-span-8) ── */}
+            <div className="lg:col-span-7 xl:col-span-8 flex flex-col h-full bg-slate-950 border-b lg:border-b-0 lg:border-r border-white/10 relative overflow-hidden select-none">
+              
+              {/* Top Theater Controls */}
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-950 border-b border-white/10 z-20">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold tracking-wide">
+                    <span className="material-icons text-xs text-sky-400">photo_library</span>
+                    Photo {activePhotoIndex + 1} of {activeEvent.photos.length}
+                  </span>
+                  {activeEvent.photos.length > 1 && (
+                    <button
+                      onClick={() => setIsPlaying(!isPlaying)}
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 hover:bg-white/15 text-slate-300 text-xs font-semibold transition-colors cursor-pointer border border-white/10"
+                      title={isPlaying ? "Pause auto-slideshow" : "Resume auto-slideshow"}
+                    >
+                      <span className="material-icons text-xs text-sky-400">{isPlaying ? "pause" : "play_arrow"}</span>
+                      <span className="hidden sm:inline">{isPlaying ? "Auto: Active" : "Auto: Paused"}</span>
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">Use ← → arrow keys to flip</span>
+                  {/* Close button on mobile theater view */}
+                  <button
+                    onClick={closeEvent}
+                    className="lg:hidden w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer"
+                    title="Close"
+                  >
+                    <span className="material-icons text-base">close</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Viewport: ZERO-CROP OBJECT-CONTAIN FIT IMAGE */}
+              <div className="relative flex-1 flex items-center justify-center p-3 sm:p-6 overflow-hidden min-h-[300px] sm:min-h-[380px] lg:min-h-0 bg-slate-950">
+                {/* Ambient glow reflection */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center blur-3xl opacity-25 scale-110 pointer-events-none transition-all duration-700"
+                  style={{ backgroundImage: `url(${activeEvent.photos[activePhotoIndex].src})` }}
+                />
+
+                {/* The Photo: OBJECT-CONTAIN guarantees COMPLETE VISIBILITY */}
+                <img
+                  key={activeEvent.photos[activePhotoIndex].src}
+                  src={activeEvent.photos[activePhotoIndex].src}
+                  alt={activeEvent.photos[activePhotoIndex].title}
+                  className="relative z-10 max-w-full max-h-full object-contain mx-auto drop-shadow-2xl rounded-xl transition-all duration-300 select-none"
+                />
+
+                {/* Left Navigation Arrow */}
+                {activeEvent.photos.length > 1 && (
+                  <button
+                    onClick={() => goToPhoto(activePhotoIndex - 1)}
+                    className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center backdrop-blur-md border border-white/15 shadow-xl transition-all hover:scale-110 cursor-pointer"
+                    title="Previous photo (←)"
+                  >
+                    <span className="material-icons text-xl sm:text-2xl">chevron_left</span>
+                  </button>
+                )}
+
+                {/* Right Navigation Arrow */}
+                {activeEvent.photos.length > 1 && (
+                  <button
+                    onClick={() => goToPhoto(activePhotoIndex + 1)}
+                    className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center backdrop-blur-md border border-white/15 shadow-xl transition-all hover:scale-110 cursor-pointer"
+                    title="Next photo (→)"
+                  >
+                    <span className="material-icons text-xl sm:text-2xl">chevron_right</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Photo Caption Strip */}
+              <div className="px-4 sm:px-6 py-2.5 bg-slate-950/95 border-t border-white/10 z-20">
+                <div className="text-white text-xs sm:text-sm font-bold truncate">
+                  {activeEvent.photos[activePhotoIndex].title}
+                </div>
+                <div className="text-slate-400 text-[11px] sm:text-xs truncate font-medium mt-0.5">
+                  {activeEvent.photos[activePhotoIndex].caption}
+                </div>
+              </div>
+
+              {/* Thumbnails Row */}
+              {activeEvent.photos.length > 1 && (
+                <div className="px-4 sm:px-6 py-3 bg-black/90 border-t border-white/10 z-20 overflow-x-auto no-scrollbar flex items-center gap-2.5">
+                  {activeEvent.photos.map((p, idx) => {
+                    const isActive = idx === activePhotoIndex;
+                    return (
+                      <button
+                        key={p.src}
+                        onClick={() => setActivePhotoIndex(idx)}
+                        className={`relative flex-shrink-0 w-16 h-12 sm:w-20 sm:h-14 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                          isActive
+                            ? "border-sky-400 scale-105 shadow-md shadow-sky-400/30 ring-2 ring-sky-400/40"
+                            : "border-white/20 opacity-50 hover:opacity-90 hover:border-white/50"
+                        }`}
+                      >
+                        <img src={p.src} alt={p.title} className="w-full h-full object-cover" />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* ── RIGHT COLUMN: EVENT DOSSIER (lg:col-span-5 xl:col-span-4) ── */}
+            <div className="lg:col-span-5 xl:col-span-4 flex flex-col h-full bg-white overflow-hidden">
+              
+              {/* Header Box */}
+              <div className="p-6 pb-4 border-b border-slate-100 flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-primary/10 text-primary">
+                      {activeEvent.category}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-sky-50 text-secondary border border-sky-100">
+                      {activeEvent.badge}
+                    </span>
+                    <span className="text-xs font-semibold text-slate-400">
+                      {activeEvent.date}
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-primary leading-tight">
+                    {activeEvent.title}
+                  </h3>
+                </div>
+
+                <button
+                  onClick={closeEvent}
+                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
+                  title="Close (Esc)"
+                >
+                  <span className="material-icons text-lg">close</span>
+                </button>
+              </div>
+
+              {/* Location & Stall Cards */}
+              <div className="px-6 py-3 bg-slate-50 border-b border-slate-100 grid grid-cols-1 gap-1.5 text-xs font-semibold text-slate-700">
+                <div className="flex items-center gap-2">
+                  <span className="material-icons text-sm text-secondary flex-shrink-0">place</span>
+                  <span className="truncate">{activeEvent.venue}</span>
+                </div>
+                {activeEvent.stall && (
+                  <div className="flex items-center gap-2">
+                    <span className="material-icons text-sm text-emerald-600 flex-shrink-0">storefront</span>
+                    <span className="truncate font-bold text-slate-900">{activeEvent.stall}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Navigation Tabs */}
+              <div className="flex items-center border-b border-slate-100 px-6 bg-white overflow-x-auto no-scrollbar">
+                {[
+                  { id: "overview", label: "Overview", icon: "article" },
+                  { id: "highlights", label: "Highlights", icon: "verified" },
+                  { id: "products", label: "Products", icon: "medication" },
+                  { id: "delegation", label: "Delegation", icon: "groups" },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`flex items-center gap-1.5 py-3 px-3 text-xs font-bold border-b-2 transition-all flex-shrink-0 cursor-pointer ${
+                      activeTab === tab.id
+                        ? "border-primary text-primary"
+                        : "border-transparent text-slate-400 hover:text-slate-700"
+                    }`}
+                  >
+                    <span className="material-icons text-sm">{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Tab Content Body (Scrollable) */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                {activeTab === "overview" && (
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+                      Executive Summary &amp; Scope
+                    </h4>
+                    <p className="text-slate-600 text-sm leading-relaxed font-medium">
+                      {activeEvent.overview}
+                    </p>
+                    <div className="pt-3 border-t border-slate-100">
+                      <div className="text-xs font-bold text-slate-700 mb-2">Event Scope Metrics:</div>
+                      <div className="grid grid-cols-2 gap-2 text-center">
+                        <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                          <div className="text-lg font-black text-primary">1000+</div>
+                          <div className="text-[10px] font-bold text-slate-400 uppercase">Formulations Presented</div>
+                        </div>
+                        <div className="p-3 rounded-2xl bg-sky-50 border border-sky-100">
+                          <div className="text-lg font-black text-secondary">Pan-India</div>
+                          <div className="text-[10px] font-bold text-slate-400 uppercase">Trade Reach</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "highlights" && (
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">
+                      Outcomes &amp; Milestone Achievements
+                    </h4>
+                    {activeEvent.keyHighlights.map((hl, i) => (
+                      <div key={i} className="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                        <span className="material-icons text-emerald-600 text-base mt-0.5 flex-shrink-0">check_circle</span>
+                        <span className="text-xs font-semibold text-slate-700 leading-relaxed">{hl}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {activeTab === "products" && (
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">
+                      Formulations Showcased to Buyers
+                    </h4>
+                    <div className="grid grid-cols-1 gap-2.5">
+                      {activeEvent.productsShowcased.map((p, i) => (
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-primary/5 border border-primary/10">
+                          <span className="material-icons text-primary text-base flex-shrink-0">vaccines</span>
+                          <span className="text-xs font-bold text-primary">{p}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "delegation" && (
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">
+                      Official Company Representatives
+                    </h4>
+                    <div className="space-y-2">
+                      {activeEvent.delegation.map((del, i) => (
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                          <div className="w-8 h-8 rounded-full bg-secondary/10 text-secondary flex items-center justify-center font-bold text-xs flex-shrink-0">
+                            <span className="material-icons text-sm">person</span>
+                          </div>
+                          <span className="text-xs font-bold text-slate-800">{del}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer CTA */}
+              <div className="p-4 sm:p-6 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row items-center gap-3">
+                <a
+                  href={`/contact?subject=${encodeURIComponent(`Inquiry regarding ${activeEvent.title}`)}`}
+                  className="w-full sm:flex-1 py-3 px-4 bg-primary hover:bg-primary-accent text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer text-center"
+                >
+                  <span className="material-icons text-sm">mail</span>
+                  <span>Inquire About Formulations</span>
+                </a>
+                <button
+                  onClick={closeEvent}
+                  className="w-full sm:w-auto py-3 px-5 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition-colors cursor-pointer text-center"
+                >
+                  Close
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+<Footer />
     </div>
   );
 }
